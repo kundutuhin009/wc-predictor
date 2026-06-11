@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# World Cup 2026 — Score Predictor
 
-## Getting Started
+Predict the **exact scoreline** of every WC2026 match. 1 point per exact hit
+(score at end of regular + extra time, **before penalties**). Email-OTP login,
+predictions lock 15 minutes before kickoff and can never be edited, IST
+everywhere, admin result entry with automatic grading, and a live leaderboard.
 
-First, run the development server:
+## Stack
+Next.js 14 (App Router) · TypeScript · Tailwind · Supabase (`@supabase/ssr`,
+email OTP) · `date-fns-tz` for IST display. Deploys to Vercel.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 1. Set up the database (Supabase SQL editor)
+Run these **in order**:
+
+1. `db/schema.sql` — tables, RLS, grading trigger, `leaderboard` view.
+2. `db/seed_matches.sql` — the 104 WC2026 fixtures.
+3. `db/admin_stats.sql` — aggregate view that powers the "X correct" count on
+   `/admin` (predictions RLS hides individual picks, so admin counts come from
+   this counts-only view, exactly like `leaderboard`).
+
+## 2. Local env
+Fill `.env.local` with your project's values (Supabase → Project Settings → API):
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR-ANON-KEY
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+In Supabase → **Authentication → Providers → Email**, enable email and ensure
+email OTP is on (this app uses 6-digit codes, no magic link required). Set
+**Authentication → URL Configuration → Site URL** to your local
+(`http://localhost:3000`) and production URLs.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 3. Make yourself admin
+Sign in once (so your `profiles` row exists), then run in the SQL editor:
 
-## Learn More
+```sql
+update profiles set is_admin = true where email = 'YOUR_EMAIL';
+```
 
-To learn more about Next.js, take a look at the following resources:
+Reload `/admin` — you'll see the admin tools.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Rules enforced
+- **Lock:** predictions close at `kickoff − 15 min`. Enforced by the RLS insert
+  policy **and** re-checked server-side against the server clock.
+- **No edits:** the predictions table has no UPDATE policy — once placed, a pick
+  is final at the database level. The UI never shows an edit form.
+- **Privacy:** each user reads only their own predictions (RLS). The leaderboard
+  exposes names + points only.
