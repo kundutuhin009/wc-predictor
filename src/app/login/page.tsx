@@ -107,22 +107,35 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-dvh items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-pitch text-ink shadow-card">
-            <Trophy className="h-7 w-7" aria-hidden />
+        <div className="overflow-hidden rounded-3xl border border-line shadow-card animate-slide-up">
+          {/* Bold themed hero: deep pitch ink + floodlight + bright accents */}
+          <div className="relative overflow-hidden bg-ink px-6 pb-8 pt-9 text-center">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 -top-20 h-48 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(41,224,140,0.5),transparent_70%)]"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-[0.18] [background-image:repeating-linear-gradient(90deg,rgba(255,255,255,0.6)_0_1px,transparent_1px_42px)]"
+            />
+            <div className="relative">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-pitch text-ink shadow-glow">
+                <Trophy className="h-8 w-8" aria-hidden />
+              </div>
+              <h1 className="font-display text-4xl font-bold uppercase leading-none tracking-tight text-white">
+                World Cup <span className="text-pitch">2026</span>
+              </h1>
+              <p className="mt-2 font-display text-xs font-semibold uppercase tracking-[0.35em] text-amber">
+                Score Predictor
+              </p>
+            </div>
           </div>
-          <h1 className="font-display text-3xl font-extrabold tracking-tight">
-            World Cup 2026
-          </h1>
-          <p className="mt-1 font-display text-lg font-bold text-pitch-dark">
-            Score Predictor
-          </p>
-          <p className="mt-3 text-sm text-muted">
-            Predict the exact scoreline. One point per exact hit.
-          </p>
-        </div>
 
-        <div className="rounded-xl2 border border-line bg-card p-6 shadow-card animate-slide-up">
+          {/* Form body */}
+          <div className="bg-card px-6 pb-6 pt-5">
+            <p className="mb-5 text-center text-sm text-muted">
+              Predict the exact scoreline. One point per exact hit.
+            </p>
           {step === "checking" && (
             <div className="flex items-center justify-center py-6 text-muted">
               <Loader2 className="h-6 w-6 animate-spin" aria-hidden />
@@ -239,6 +252,7 @@ export default function LoginPage() {
               {error}
             </p>
           )}
+          </div>
         </div>
 
         <p className="mt-6 text-center text-sm text-muted">
