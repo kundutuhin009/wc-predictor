@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createAnonClient } from "@/lib/supabase/anon";
 import { FocusRefresh } from "@/components/FocusRefresh";
-import { Flag } from "@/components/Flag";
+import { TeamFlag } from "@/components/TeamFlag";
 import type { PublicResult } from "@/lib/types";
 import { formatKickoffIST } from "@/lib/time";
 import { Trophy, Check, CalendarClock, LogIn } from "lucide-react";
@@ -96,7 +96,7 @@ function ResultCard({ result }: { result: PublicResult }) {
 
       <div className="flex items-center justify-between gap-3">
         <span className="inline-flex min-w-0 flex-1 items-center gap-2 font-display text-lg font-semibold uppercase tracking-wide">
-          <Flag team={home_team} />
+          <TeamFlag team={home_team} />
           <span className="truncate">{home_team}</span>
         </span>
         <span className="shrink-0 font-mono text-2xl font-bold tnum">
@@ -106,7 +106,7 @@ function ResultCard({ result }: { result: PublicResult }) {
         </span>
         <span className="inline-flex min-w-0 flex-1 items-center justify-end gap-2 text-right font-display text-lg font-semibold uppercase tracking-wide">
           <span className="truncate">{away_team}</span>
-          <Flag team={away_team} />
+          <TeamFlag team={away_team} />
         </span>
       </div>
 

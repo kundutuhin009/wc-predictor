@@ -4,7 +4,7 @@ import { useState, useRef, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, Loader2 } from "lucide-react";
 import { submitPrediction } from "@/app/actions/predictions";
-import { Flag } from "./Flag";
+import { TeamFlag } from "./TeamFlag";
 import { toast } from "@/lib/toast";
 
 export function PredictionForm({
@@ -62,7 +62,7 @@ export function PredictionForm({
       <div className="flex items-center justify-center gap-3 sm:gap-5">
         <label className="flex flex-col items-center gap-1.5">
           <span className="inline-flex max-w-[7rem] items-center gap-1.5 text-xs font-semibold text-muted">
-            <Flag team={homeTeam} />
+            <TeamFlag team={homeTeam} />
             <span className="truncate">{homeTeam}</span>
           </span>
           <input
@@ -86,7 +86,7 @@ export function PredictionForm({
 
         <label className="flex flex-col items-center gap-1.5">
           <span className="inline-flex max-w-[7rem] items-center gap-1.5 text-xs font-semibold text-muted">
-            <Flag team={awayTeam} />
+            <TeamFlag team={awayTeam} />
             <span className="truncate">{awayTeam}</span>
           </span>
           <input

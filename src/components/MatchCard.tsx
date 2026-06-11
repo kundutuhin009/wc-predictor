@@ -2,7 +2,7 @@ import { Check, X, Lock, CalendarClock } from "lucide-react";
 import type { MatchWithPrediction } from "@/lib/types";
 import { formatKickoffIST, formatCloseTimeIST, closeTimeMs } from "@/lib/time";
 import { OpenMatch } from "./OpenMatch";
-import { Flag } from "./Flag";
+import { TeamFlag } from "./TeamFlag";
 import { cn } from "@/lib/cn";
 
 export type Bucket = "open" | "locked" | "closed";
@@ -32,7 +32,7 @@ function TeamRow({
           emphasize ? "text-ink" : "text-ink",
         )}
       >
-        <Flag team={name} />
+        <TeamFlag team={name} />
         <span className="truncate">{name}</span>
       </span>
       {score !== undefined && (
@@ -69,11 +69,11 @@ export function MatchCard({
       {bucket === "open" && (
         <>
           <div className="mb-1 flex items-center justify-center gap-2 font-display text-xl font-bold uppercase tracking-wide">
-            <Flag team={home_team} />
+            <TeamFlag team={home_team} />
             <span className="truncate">{home_team}</span>
             <span className="px-0.5 text-sm font-normal text-muted">v</span>
             <span className="truncate">{away_team}</span>
-            <Flag team={away_team} />
+            <TeamFlag team={away_team} />
           </div>
           <p className="text-center text-xs text-muted">
             Predictions close {formatCloseTimeIST(kickoff_at)}

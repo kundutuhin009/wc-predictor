@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Loader2, Check } from "lucide-react";
 import { enterResult, deleteMatch } from "@/app/actions/admin";
 import { MatchForm } from "./MatchForm";
-import { Flag } from "../Flag";
+import { TeamFlag } from "../TeamFlag";
 import { formatKickoffIST, utcToISTLocalInput } from "@/lib/time";
 import type { Match } from "@/lib/types";
 import { toast } from "@/lib/toast";
@@ -96,11 +96,11 @@ export function AdminMatchRow({
                 )}
               </div>
               <h3 className="mt-1.5 flex items-center gap-2 font-display text-lg font-semibold uppercase tracking-wide">
-                <Flag team={match.home_team} />
+                <TeamFlag team={match.home_team} />
                 <span className="truncate">{match.home_team}</span>
                 <span className="text-sm font-normal text-muted">v</span>
                 <span className="truncate">{match.away_team}</span>
-                <Flag team={match.away_team} />
+                <TeamFlag team={match.away_team} />
               </h3>
               <p className="text-xs text-muted">
                 {formatKickoffIST(match.kickoff_at)}
