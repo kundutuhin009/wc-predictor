@@ -1,6 +1,7 @@
 import { Check, X } from "lucide-react";
 import type { AdminBreakdownRow } from "@/lib/types";
 import { formatKickoffIST } from "@/lib/time";
+import { Flag } from "../Flag";
 
 // Grouped per-match breakdown of every member's pick (admin-only).
 // Data comes from get_admin_breakdown(), which returns nothing to non-admins.
@@ -53,9 +54,12 @@ export function AdminBreakdown({ rows }: { rows: AdminBreakdownRow[] }) {
             <div className="mb-3 flex items-center justify-between gap-2">
               <div>
                 <span className="stage-badge">{meta.stage}</span>
-                <h3 className="mt-1.5 font-display text-lg font-bold">
-                  {meta.home_team} <span className="text-muted">v</span>{" "}
-                  {meta.away_team}
+                <h3 className="mt-1.5 flex items-center gap-2 font-display text-lg font-semibold uppercase tracking-wide">
+                  <Flag team={meta.home_team} />
+                  <span className="truncate">{meta.home_team}</span>
+                  <span className="text-sm font-normal text-muted">v</span>
+                  <span className="truncate">{meta.away_team}</span>
+                  <Flag team={meta.away_team} />
                 </h3>
                 <p className="text-xs text-muted">
                   {formatKickoffIST(meta.kickoff_at)}
@@ -65,7 +69,7 @@ export function AdminBreakdown({ rows }: { rows: AdminBreakdownRow[] }) {
                 <div className="font-mono text-2xl font-bold tnum">
                   {meta.home_score}–{meta.away_score}
                 </div>
-                <div className="text-xs text-pitch">
+                <div className="text-xs text-pitch-dark">
                   {correct} / {picks.length} correct
                 </div>
               </div>

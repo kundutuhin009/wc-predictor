@@ -26,12 +26,12 @@ export function Nav({ displayName, isAdmin }: Props) {
     <header className="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-pitch text-white">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-pitch text-ink">
             <Trophy className="h-4 w-4" aria-hidden />
           </span>
           <span className="font-display text-base font-extrabold leading-none tracking-tight">
             WC26
-            <span className="block text-[10px] font-bold uppercase tracking-widest text-pitch">
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-pitch-dark">
               Predictor
             </span>
           </span>

@@ -2,6 +2,7 @@ import { Check, X, Lock, CalendarClock } from "lucide-react";
 import type { MatchWithPrediction } from "@/lib/types";
 import { formatKickoffIST, formatCloseTimeIST, closeTimeMs } from "@/lib/time";
 import { OpenMatch } from "./OpenMatch";
+import { Flag } from "./Flag";
 import { cn } from "@/lib/cn";
 
 export type Bucket = "open" | "locked" | "closed";
@@ -27,11 +28,12 @@ function TeamRow({
     <div className="flex items-center justify-between gap-3">
       <span
         className={cn(
-          "truncate font-display text-lg font-bold",
+          "inline-flex min-w-0 items-center gap-2 font-display text-lg font-semibold uppercase tracking-wide",
           emphasize ? "text-ink" : "text-ink",
         )}
       >
-        {name}
+        <Flag team={name} />
+        <span className="truncate">{name}</span>
       </span>
       {score !== undefined && (
         <span className="font-mono text-2xl font-bold tabular-nums tnum">
@@ -66,8 +68,12 @@ export function MatchCard({
       {/* OPEN: teams as labels live inside the form; show matchup + form */}
       {bucket === "open" && (
         <>
-          <div className="mb-1 text-center font-display text-xl font-extrabold">
-            {home_team} <span className="text-muted">v</span> {away_team}
+          <div className="mb-1 flex items-center justify-center gap-2 font-display text-xl font-bold uppercase tracking-wide">
+            <Flag team={home_team} />
+            <span className="truncate">{home_team}</span>
+            <span className="px-0.5 text-sm font-normal text-muted">v</span>
+            <span className="truncate">{away_team}</span>
+            <Flag team={away_team} />
           </div>
           <p className="text-center text-xs text-muted">
             Predictions close {formatCloseTimeIST(kickoff_at)}

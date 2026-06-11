@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
+import { Oswald, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-// Display face with personality for headings & scores.
-const display = Bricolage_Grotesque({
+// Athletic, condensed display face for headings, team names & scores.
+const display = Oswald({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["600", "700", "800"],
+  weight: ["500", "600", "700"],
   display: "swap",
 });
 // Clean body face.
@@ -41,6 +41,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Open flag icon set (no copyrighted assets) for team flags. */}
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css"
+        />
+      </head>
       <body
         className={`${display.variable} ${body.variable} ${mono.variable} min-h-dvh`}
       >

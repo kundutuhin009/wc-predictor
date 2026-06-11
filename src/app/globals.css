@@ -3,27 +3,69 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* ---- Bold tournament palette (RGB triplets) ---- */
+    --c-paper: 244 247 240; /* #F4F7F0 soft pitch white */
+    --c-card: 255 255 255;
+    --c-ink: 6 33 25; /* #062119 deep pitch ink */
+    --c-muted: 88 105 97; /* #586961 */
+    --c-line: 224 230 220; /* #E0E6DC */
+
+    --c-pitch: 18 197 110; /* #12C56E vivid grass — bright fill, INK text */
+    --c-pitch-dark: 7 107 64; /* #076B40 text-safe deep green */
+    --c-pitch-light: 219 247 231; /* #DBF7E7 pale green chip */
+
+    --c-amber: 255 184 26; /* #FFB81A trophy gold — bright fill, INK text */
+    --c-amber-dark: 146 99 0; /* #926300 text-safe gold */
+    --c-amber-light: 255 243 214; /* #FFF3D6 pale gold chip */
+
+    --c-electric: 41 224 140; /* #29E08C decorative glow only */
+    --c-win: 7 107 64; /* deep green */
+    --c-miss: 154 164 160; /* #9AA4A0 */
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
   }
   body {
     @apply bg-paper text-ink font-sans antialiased;
-    /* faint pitch glow, very low contrast */
-    background-image: radial-gradient(
-      circle at 100% 0%,
-      rgba(11, 122, 75, 0.05),
-      transparent 40%
-    );
-    background-attachment: fixed;
+    position: relative;
   }
-  /* Tabular figures so score/countdown columns line up. */
+  /* Subtle football backdrop: twin floodlight glows + faint mowing stripes.
+     Fixed, low-opacity, behind everything — never competes with text.
+     Static (no animation), so prefers-reduced-motion needs nothing extra. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: rgb(var(--c-paper));
+    background-image:
+      radial-gradient(
+        1100px 520px at 50% -12%,
+        rgba(41, 224, 140, 0.13),
+        transparent 60%
+      ),
+      radial-gradient(
+        820px 560px at 100% 0%,
+        rgba(255, 184, 26, 0.08),
+        transparent 55%
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(6, 33, 25, 0.022) 0 1px,
+        transparent 1px 48px
+      );
+  }
+  /* Tabular figures so score/countdown/leaderboard columns line up. */
   .tnum {
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
   }
   /* Visible keyboard focus across the app. */
   :focus-visible {
-    outline: 2px solid #0b7a4b;
+    outline: 2px solid rgb(var(--c-pitch-dark));
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -36,6 +78,16 @@
   input[type="number"] {
     -moz-appearance: textfield;
     appearance: textfield;
+  }
+  /* Consistent flag chip (flag-icons backgrounds, sized + softly framed). */
+  .fib {
+    width: 1.3rem;
+    height: 0.95rem;
+    border-radius: 3px;
+    background-size: cover;
+    background-position: center;
+    box-shadow: inset 0 0 0 1px rgba(6, 33, 25, 0.12);
+    flex: none;
   }
 }
 
@@ -52,13 +104,13 @@
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-pitch px-5 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-pitch-dark active:bg-pitch-dark disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-pitch px-5 py-3 font-display text-base font-semibold uppercase tracking-wide text-ink shadow-glow transition hover:brightness-95 active:brightness-90 disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-card px-4 py-2.5 font-medium text-ink transition-colors hover:bg-paper disabled:opacity-50;
   }
   .stage-badge {
-    @apply inline-flex items-center rounded-full bg-pitch-light px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-pitch-dark;
+    @apply inline-flex items-center rounded-full bg-pitch-light px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-pitch-dark;
   }
   .score-input {
     @apply h-16 w-16 rounded-xl border-2 border-line bg-paper text-center font-mono text-3xl font-bold text-ink tnum transition-colors focus:border-pitch focus:bg-white sm:h-20 sm:w-20;

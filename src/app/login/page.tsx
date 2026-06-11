@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Trophy, Loader2, ArrowRight } from "lucide-react";
+import { Trophy, Loader2, ArrowRight, MailCheck } from "lucide-react";
 
-type Step = "email" | "code" | "name" | "checking";
+type Step = "checking" | "email" | "sent" | "name";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,16 +14,19 @@ export default function LoginPage() {
 
   const [step, setStep] = useState<Step>("checking");
   const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // On mount: forward an already-onboarded user to the app; drop a
-  // verified-but-unnamed user straight to the name step; otherwise sign in.
+  // signed-in-but-unnamed user (just back from the magic link) to the name
+  // step; otherwise start at the email step. Surface a callback error if any.
   useEffect(() => {
     let active = true;
     (async () => {
+      if (new URLSearchParams(window.location.search).has("error")) {
+        setError("That sign-in link didn't work. Request a fresh one.");
+      }
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -52,51 +55,23 @@ export default function LoginPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function sendCode(e: React.FormEvent) {
+  async function sendLink(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setBusy(true);
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
-      options: { shouldCreateUser: true },
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: `${location.origin}/auth/callback`,
+      },
     });
     setBusy(false);
     if (error) {
       setError(error.message);
       return;
     }
-    setStep("code");
-  }
-
-  async function verifyCode(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setBusy(true);
-    const { data, error } = await supabase.auth.verifyOtp({
-      email: email.trim(),
-      token: code.trim(),
-      type: "email",
-    });
-    if (error || !data.user) {
-      setBusy(false);
-      setError(error?.message ?? "That code didn't work. Try again.");
-      return;
-    }
-
-    // First time in? If no profile row yet, ask for a display name.
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("id", data.user.id)
-      .maybeSingle();
-
-    setBusy(false);
-    if (profile) {
-      router.replace("/");
-      router.refresh();
-    } else {
-      setStep("name");
-    }
+    setStep("sent");
   }
 
   async function saveName(e: React.FormEvent) {
@@ -108,7 +83,7 @@ export default function LoginPage() {
     } = await supabase.auth.getUser();
     if (!user) {
       setBusy(false);
-      setError("Session expired. Start over.");
+      setError("Session expired. Request a new sign-in link.");
       setStep("email");
       return;
     }
@@ -133,13 +108,13 @@ export default function LoginPage() {
     <main className="flex min-h-dvh items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-pitch text-white shadow-card">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-pitch text-ink shadow-card">
             <Trophy className="h-7 w-7" aria-hidden />
           </div>
           <h1 className="font-display text-3xl font-extrabold tracking-tight">
             World Cup 2026
           </h1>
-          <p className="mt-1 font-display text-lg font-bold text-pitch">
+          <p className="mt-1 font-display text-lg font-bold text-pitch-dark">
             Score Predictor
           </p>
           <p className="mt-3 text-sm text-muted">
@@ -156,7 +131,7 @@ export default function LoginPage() {
           )}
 
           {step === "email" && (
-            <form onSubmit={sendCode} className="space-y-4">
+            <form onSubmit={sendLink} className="space-y-4">
               <label className="block">
                 <span className="mb-1.5 block text-sm font-medium text-ink">
                   Email
@@ -178,63 +153,45 @@ export default function LoginPage() {
                   <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
                 ) : (
                   <>
-                    Send me a code <ArrowRight className="h-4 w-4" aria-hidden />
+                    Email me a sign-in link{" "}
+                    <ArrowRight className="h-4 w-4" aria-hidden />
                   </>
                 )}
               </button>
               <p className="text-center text-xs text-muted">
-                No password. We email you a 6-digit code.
+                No password. We email you a link — click it to sign in.
               </p>
             </form>
           )}
 
-          {step === "code" && (
-            <form onSubmit={verifyCode} className="space-y-4">
+          {step === "sent" && (
+            <div className="space-y-4 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-pitch-light text-pitch-dark">
+                <MailCheck className="h-6 w-6" aria-hidden />
+              </div>
               <div>
-                <p className="text-sm text-muted">
-                  We sent a 6-digit code to
+                <h2 className="font-display text-xl font-bold">
+                  Check your email
+                </h2>
+                <p className="mt-1 text-sm text-muted">
+                  Click the sign-in link we sent to
                 </p>
                 <p className="font-medium text-ink">{email}</p>
               </div>
-              <label className="block">
-                <span className="mb-1.5 block text-sm font-medium text-ink">
-                  Verification code
-                </span>
-                <input
-                  type="text"
-                  required
-                  autoFocus
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  pattern="[0-9]*"
-                  maxLength={6}
-                  value={code}
-                  onChange={(e) =>
-                    setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
-                  }
-                  placeholder="123456"
-                  className="w-full rounded-xl border border-line bg-paper px-4 py-3 text-center font-mono text-2xl tracking-[0.4em] tnum outline-none focus:border-pitch focus:bg-white"
-                />
-              </label>
-              <button type="submit" disabled={busy} className="btn-primary w-full">
-                {busy ? (
-                  <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
-                ) : (
-                  "Verify & continue"
-                )}
-              </button>
+              <p className="text-xs text-muted">
+                The link opens this app and signs you in. You can close this tab.
+              </p>
               <button
                 type="button"
                 onClick={() => {
                   setStep("email");
-                  setCode("");
                   setError(null);
                 }}
                 className="w-full text-center text-sm text-muted underline-offset-2 hover:underline"
               >
                 Use a different email
               </button>
-            </form>
+            </div>
           )}
 
           {step === "name" && (
@@ -288,7 +245,7 @@ export default function LoginPage() {
           Not playing?{" "}
           <Link
             href="/results"
-            className="font-semibold text-pitch underline-offset-2 hover:underline"
+            className="font-semibold text-pitch-dark underline-offset-2 hover:underline"
           >
             Watch the results board
           </Link>{" "}

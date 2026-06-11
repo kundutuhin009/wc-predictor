@@ -1,5 +1,10 @@
 import type { Config } from "tailwindcss";
 
+// All palette colors are driven by CSS variables (RGB triplets defined in
+// globals.css :root), exposed through the `rgb(var(--x) / <alpha-value>)`
+// channel form so Tailwind opacity modifiers (bg-pitch/50 etc.) still work.
+const c = (v: string) => `rgb(var(${v}) / <alpha-value>)`;
+
 const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,23 +14,28 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Pitch / tournament palette — clean, warm, not casino neon.
-        paper: "#FAFAF5",
-        card: "#FFFFFF",
-        ink: "#0E1F17", // deep pitch-black green, primary text
-        muted: "#5B6B62",
-        line: "#E6E7E0",
+        paper: c("--c-paper"),
+        card: c("--c-card"),
+        ink: c("--c-ink"),
+        muted: c("--c-muted"),
+        line: c("--c-line"),
+        // Vivid pitch green — primary. `DEFAULT` is a bright fill (use INK text
+        // on it); `dark` is the text-safe deep green for green text on light.
         pitch: {
-          DEFAULT: "#0B7A4B", // grass green, primary action
-          dark: "#085C39",
-          light: "#E7F4EE",
+          DEFAULT: c("--c-pitch"),
+          dark: c("--c-pitch-dark"),
+          light: c("--c-pitch-light"),
         },
+        // Tournament gold — punchy secondary. `DEFAULT` is a bright fill (INK
+        // text); `dark` is text-safe gold for gold text on light.
         amber: {
-          DEFAULT: "#F4A300", // trophy amber, accent / highlight
-          light: "#FDF1D6",
+          DEFAULT: c("--c-amber"),
+          dark: c("--c-amber-dark"),
+          light: c("--c-amber-light"),
         },
-        win: "#0B7A4B",
-        miss: "#9AA4A0",
+        electric: c("--c-electric"),
+        win: c("--c-win"),
+        miss: c("--c-miss"),
       },
       fontFamily: {
         display: ["var(--font-display)", "ui-sans-serif", "system-ui"],
@@ -36,7 +46,8 @@ const config: Config = {
         xl2: "1.25rem",
       },
       boxShadow: {
-        card: "0 1px 2px rgba(14,31,23,0.04), 0 8px 24px -12px rgba(14,31,23,0.12)",
+        card: "0 1px 2px rgba(6,33,25,0.05), 0 12px 28px -14px rgba(6,33,25,0.18)",
+        glow: "0 8px 24px -8px rgba(18,197,110,0.45)",
       },
       keyframes: {
         "pop-in": {

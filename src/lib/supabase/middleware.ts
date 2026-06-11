@@ -14,7 +14,7 @@ export async function updateSession(request: NextRequest) {
         getAll() {
           return request.cookies.getAll();
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet, headers) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
@@ -22,6 +22,13 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options),
           );
+          // @supabase/ssr 0.12 passes no-store headers that must ride along with
+          // any response that sets auth cookies (so CDNs never cache a session).
+          if (headers) {
+            Object.entries(headers).forEach(([k, v]) =>
+              response.headers.set(k, v),
+            );
+          }
         },
       },
     },
@@ -34,8 +41,15 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isLogin = path === "/login";
-  // Public, no-login routes. /results is the anonymous announcement board.
-  const isPublic = isLogin || path === "/results" || path.startsWith("/results/");
+  // Public, no-login routes:
+  //  - /results        anonymous announcement board
+  //  - /auth/*         the magic-link callback, which must run BEFORE a session
+  //                    exists to create one (otherwise we'd bounce it to /login)
+  const isPublic =
+    isLogin ||
+    path === "/results" ||
+    path.startsWith("/results/") ||
+    path.startsWith("/auth/");
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();

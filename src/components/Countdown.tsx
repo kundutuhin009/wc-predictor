@@ -61,6 +61,6 @@ export function Countdown({
 function cnUrgent(urgent: boolean) {
   return [
     "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs",
-    urgent ? "bg-amber-light text-amber" : "bg-pitch-light text-pitch-dark",
+    urgent ? "bg-amber-light text-amber-dark" : "bg-pitch-light text-pitch-dark",
   ].join(" ");
 }

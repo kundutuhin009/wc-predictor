@@ -1,0 +1,58 @@
+// Map team names (as stored in the matches table) to flag-icons ISO codes.
+// flag-icons supports UK subdivisions (gb-eng, gb-sct) which we use for the
+// home nations. Anything not here (TBD / knockout placeholders) returns null
+// and the UI shows a neutral football fallback — never a broken image.
+export const TEAM_FLAGS: Record<string, string> = {
+  Mexico: "mx",
+  "South Africa": "za",
+  "South Korea": "kr",
+  Czechia: "cz",
+  Canada: "ca",
+  "Bosnia and Herzegovina": "ba",
+  USA: "us",
+  Paraguay: "py",
+  Qatar: "qa",
+  Switzerland: "ch",
+  Brazil: "br",
+  Morocco: "ma",
+  Haiti: "ht",
+  Scotland: "gb-sct",
+  Australia: "au",
+  Turkiye: "tr",
+  Germany: "de",
+  Curacao: "cw",
+  Netherlands: "nl",
+  Japan: "jp",
+  "Ivory Coast": "ci",
+  Ecuador: "ec",
+  Sweden: "se",
+  Tunisia: "tn",
+  Spain: "es",
+  "Cape Verde": "cv",
+  Belgium: "be",
+  Egypt: "eg",
+  "Saudi Arabia": "sa",
+  Uruguay: "uy",
+  Iran: "ir",
+  "New Zealand": "nz",
+  France: "fr",
+  Senegal: "sn",
+  Iraq: "iq",
+  Norway: "no",
+  Argentina: "ar",
+  Algeria: "dz",
+  Austria: "at",
+  Jordan: "jo",
+  Portugal: "pt",
+  "DR Congo": "cd",
+  England: "gb-eng",
+  Croatia: "hr",
+  Ghana: "gh",
+  Panama: "pa",
+  Uzbekistan: "uz",
+  Colombia: "co",
+};
+
+export function flagCode(team: string): string | null {
+  return TEAM_FLAGS[team] ?? null;
+}

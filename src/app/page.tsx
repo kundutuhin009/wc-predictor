@@ -59,14 +59,14 @@ export default async function HomePage() {
         <p className="mt-1 text-sm text-muted">
           Predict the exact scoreline — 1 point per exact hit. You&apos;ve
           banked{" "}
-          <span className="font-semibold text-pitch">
+          <span className="font-semibold text-pitch-dark">
             {totalPoints} {totalPoints === 1 ? "point" : "points"}
           </span>{" "}
           so far.
         </p>
         <Link
           href="/results"
-          className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-pitch underline-offset-2 hover:underline"
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-pitch-dark underline-offset-2 hover:underline"
         >
           Public results board
           <ArrowRight className="h-4 w-4" aria-hidden />

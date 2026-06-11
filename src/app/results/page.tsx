@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createAnonClient } from "@/lib/supabase/anon";
 import { FocusRefresh } from "@/components/FocusRefresh";
+import { Flag } from "@/components/Flag";
 import type { PublicResult } from "@/lib/types";
 import { formatKickoffIST } from "@/lib/time";
 import { Trophy, Check, CalendarClock, LogIn } from "lucide-react";
@@ -26,12 +27,12 @@ export default async function ResultsPage() {
       <header className="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-pitch text-white">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-pitch text-ink">
               <Trophy className="h-4 w-4" aria-hidden />
             </span>
             <span className="font-display text-base font-extrabold leading-none tracking-tight">
               WC26
-              <span className="block text-[10px] font-bold uppercase tracking-widest text-pitch">
+              <span className="block text-[10px] font-bold uppercase tracking-widest text-pitch-dark">
                 Results
               </span>
             </span>
@@ -94,23 +95,25 @@ function ResultCard({ result }: { result: PublicResult }) {
       </div>
 
       <div className="flex items-center justify-between gap-3">
-        <span className="truncate font-display text-lg font-bold">
-          {home_team}
+        <span className="inline-flex min-w-0 flex-1 items-center gap-2 font-display text-lg font-semibold uppercase tracking-wide">
+          <Flag team={home_team} />
+          <span className="truncate">{home_team}</span>
         </span>
         <span className="shrink-0 font-mono text-2xl font-bold tnum">
           {home_score}
           <span className="px-1 text-muted">–</span>
           {away_score}
         </span>
-        <span className="truncate text-right font-display text-lg font-bold">
-          {away_team}
+        <span className="inline-flex min-w-0 flex-1 items-center justify-end gap-2 text-right font-display text-lg font-semibold uppercase tracking-wide">
+          <span className="truncate">{away_team}</span>
+          <Flag team={away_team} />
         </span>
       </div>
 
       <div className="mt-4 border-t border-line pt-3">
         {winners_count > 0 ? (
           <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
-            <span className="inline-flex items-center gap-1 font-semibold text-pitch">
+            <span className="inline-flex items-center gap-1 font-semibold text-pitch-dark">
               <Check className="h-4 w-4" aria-hidden /> Nailed it:
             </span>
             <span className="text-ink">{winner_names.join(", ")}</span>

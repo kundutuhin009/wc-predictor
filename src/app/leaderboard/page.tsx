@@ -70,7 +70,7 @@ export default async function LeaderboardPage() {
                         {row.display_name}
                       </span>
                       {isMe && (
-                        <span className="ml-2 rounded-full bg-pitch px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                        <span className="ml-2 rounded-full bg-pitch px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink">
                           You
                         </span>
                       )}
@@ -106,7 +106,7 @@ function RankBadge({ rank }: { rank: number }) {
         ? "bg-amber text-ink"
         : rank === 2
           ? "bg-line text-ink"
-          : "bg-amber-light text-amber";
+          : "bg-amber-light text-amber-dark";
     return (
       <span
         className={cn(
