@@ -108,21 +108,21 @@ export default function LoginPage() {
     <main className="flex min-h-dvh items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         <div className="overflow-hidden rounded-3xl border border-line shadow-card animate-slide-up">
-          {/* Bold themed hero: deep pitch ink + floodlight + bright accents */}
-          <div className="relative overflow-hidden bg-ink px-6 pb-8 pt-9 text-center">
+          {/* Premium trophy hero: warm gold-tinted dark + gold glow */}
+          <div className="relative overflow-hidden bg-gradient-to-b from-[#1A160B] to-[#0C0C0E] px-6 pb-8 pt-9 text-center">
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-x-0 -top-20 h-48 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(41,224,140,0.5),transparent_70%)]"
+              className="pointer-events-none absolute inset-x-0 -top-20 h-48 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(212,175,55,0.45),transparent_70%)]"
             />
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 opacity-[0.18] [background-image:repeating-linear-gradient(90deg,rgba(255,255,255,0.6)_0_1px,transparent_1px_42px)]"
+              className="pointer-events-none absolute inset-0 opacity-[0.10] [background-image:repeating-linear-gradient(90deg,rgba(212,175,55,0.8)_0_1px,transparent_1px_42px)]"
             />
             <div className="relative">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-pitch text-ink shadow-glow">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-pitch text-paper shadow-glow">
                 <Trophy className="h-8 w-8" aria-hidden />
               </div>
-              <h1 className="font-display text-4xl font-bold uppercase leading-none tracking-tight text-white">
+              <h1 className="font-display text-4xl font-bold uppercase leading-none tracking-tight text-ink">
                 World Cup <span className="text-pitch">2026</span>
               </h1>
               <p className="mt-2 font-display text-xs font-semibold uppercase tracking-[0.35em] text-amber">
@@ -158,7 +158,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-pitch focus:bg-white"
+                  className="w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-pitch focus:bg-card"
                 />
               </label>
               <button type="submit" disabled={busy} className="btn-primary w-full">
@@ -227,7 +227,7 @@ export default function LoginPage() {
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="e.g. Rohit K."
-                  className="w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-pitch focus:bg-white"
+                  className="w-full rounded-xl border border-line bg-paper px-4 py-3 text-base outline-none focus:border-pitch focus:bg-card"
                 />
               </label>
               <button
@@ -247,7 +247,7 @@ export default function LoginPage() {
           {error && (
             <p
               role="alert"
-              className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700"
+              className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300"
             >
               {error}
             </p>

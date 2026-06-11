@@ -25,8 +25,12 @@ export function Nav({ displayName, isAdmin }: Props) {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-pitch text-ink">
+        <Link
+          href="/"
+          aria-label="WC26 Predictor — matches home"
+          className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-80 focus-visible:opacity-80"
+        >
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-pitch text-paper">
             <Trophy className="h-4 w-4" aria-hidden />
           </span>
           <span className="font-display text-base font-extrabold leading-none tracking-tight">

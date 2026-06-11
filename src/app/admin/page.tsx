@@ -43,7 +43,7 @@ export default async function AdminPage() {
   return (
     <AppShell displayName={profile.display_name} isAdmin={profile.is_admin}>
       <div className="mb-6 flex items-center gap-3">
-        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-ink text-white">
+        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-pitch text-paper">
           <ShieldCheck className="h-5 w-5" aria-hidden />
         </span>
         <div>

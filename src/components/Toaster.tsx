@@ -34,17 +34,17 @@ export function Toaster() {
         <div
           key={item.id}
           className={cn(
-            "pointer-events-auto flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium shadow-card animate-pop-in",
+            "pointer-events-auto flex items-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium shadow-card animate-pop-in",
             item.kind === "success"
-              ? "bg-ink text-white"
-              : "bg-red-600 text-white",
+              ? "border-pitch/40 bg-card text-ink"
+              : "border-red-500/40 bg-card text-ink",
           )}
           role="status"
         >
           {item.kind === "success" ? (
-            <CheckCircle2 className="h-5 w-5 text-amber" aria-hidden />
+            <CheckCircle2 className="h-5 w-5 text-pitch" aria-hidden />
           ) : (
-            <XCircle className="h-5 w-5" aria-hidden />
+            <XCircle className="h-5 w-5 text-miss" aria-hidden />
           )}
           {item.message}
         </div>

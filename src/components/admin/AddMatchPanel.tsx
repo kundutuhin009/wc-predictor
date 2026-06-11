@@ -15,7 +15,7 @@ export function AddMatchPanel() {
         className="flex w-full items-center justify-between gap-2"
       >
         <span className="inline-flex items-center gap-2 font-display font-bold">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-pitch text-ink">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-pitch text-paper">
             <Plus className="h-4 w-4" aria-hidden />
           </span>
           Add a match

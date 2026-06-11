@@ -8,7 +8,9 @@ import { Trophy, Check, CalendarClock, LogIn } from "lucide-react";
 
 // Public, no-login announcement board. Reads ONLY the anon-granted
 // `public_results` view — never `predictions` or `profiles` directly.
-export const revalidate = 30;
+// Dynamic (not ISR) so a freshly-graded match shows immediately instead of
+// being hidden behind a stale cached snapshot.
+export const dynamic = "force-dynamic";
 
 export default async function ResultsPage() {
   const supabase = createAnonClient();
@@ -26,8 +28,12 @@ export default async function ResultsPage() {
       <FocusRefresh />
       <header className="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-pitch text-ink">
+          <Link
+            href="/results"
+            aria-label="WC26 Results — home"
+            className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-80 focus-visible:opacity-80"
+          >
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-pitch text-paper">
               <Trophy className="h-4 w-4" aria-hidden />
             </span>
             <span className="font-display text-base font-extrabold leading-none tracking-tight">
@@ -36,7 +42,7 @@ export default async function ResultsPage() {
                 Results
               </span>
             </span>
-          </div>
+          </Link>
           <Link href="/login" className="btn-ghost text-sm">
             <LogIn className="h-4 w-4" aria-hidden />
             Members sign in
@@ -57,7 +63,7 @@ export default async function ResultsPage() {
 
         {results.length === 0 ? (
           <div className="flex items-center gap-3 rounded-xl2 border border-dashed border-line bg-card/50 px-5 py-8 text-sm text-muted">
-            <Trophy className="h-5 w-5 shrink-0 text-line" aria-hidden />
+            <Trophy className="h-5 w-5 shrink-0 text-muted" aria-hidden />
             No results yet — check back once matches finish.
           </div>
         ) : (

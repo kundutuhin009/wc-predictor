@@ -23,7 +23,7 @@ export default async function LeaderboardPage() {
   return (
     <AppShell displayName={profile.display_name} isAdmin={profile.is_admin}>
       <div className="mb-6 flex items-center gap-3">
-        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber text-ink">
+        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber text-paper">
           <Trophy className="h-5 w-5" aria-hidden />
         </span>
         <div>
@@ -70,7 +70,7 @@ export default async function LeaderboardPage() {
                         {row.display_name}
                       </span>
                       {isMe && (
-                        <span className="ml-2 rounded-full bg-pitch px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink">
+                        <span className="ml-2 rounded-full bg-pitch px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-paper">
                           You
                         </span>
                       )}
@@ -103,7 +103,7 @@ function RankBadge({ rank }: { rank: number }) {
   if (rank <= 3) {
     const tone =
       rank === 1
-        ? "bg-amber text-ink"
+        ? "bg-amber text-paper"
         : rank === 2
           ? "bg-line text-ink"
           : "bg-amber-light text-amber-dark";

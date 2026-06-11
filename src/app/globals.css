@@ -4,36 +4,36 @@
 
 @layer base {
   :root {
-    /* ---- Bold tournament palette (RGB triplets) ---- */
-    --c-paper: 244 247 240; /* #F4F7F0 soft pitch white */
-    --c-card: 255 255 255;
-    --c-ink: 6 33 25; /* #062119 deep pitch ink */
-    --c-muted: 88 105 97; /* #586961 */
-    --c-line: 224 230 220; /* #E0E6DC */
+    /* ---- Trophy palette: gold accents on warm near-black ---- */
+    --c-paper: 11 11 13; /* #0B0B0D base near-black (also = black text on gold) */
+    --c-card: 22 22 26; /* #16161A surface */
+    --c-ink: 244 240 228; /* #F4F0E4 cream — primary text/foreground */
+    --c-muted: 156 151 138; /* #9C978A warm grey */
+    --c-line: 44 44 51; /* #2C2C33 hairline */
 
-    --c-pitch: 18 197 110; /* #12C56E vivid grass — bright fill, INK text */
-    --c-pitch-dark: 7 107 64; /* #076B40 text-safe deep green */
-    --c-pitch-light: 219 247 231; /* #DBF7E7 pale green chip */
+    --c-pitch: 212 175 55; /* #D4AF37 metallic gold — primary accent/fills */
+    --c-pitch-dark: 229 193 88; /* #E5C158 brighter gold — emphasis text/hover */
+    --c-pitch-light: 36 31 18; /* #241F12 dark gold-tinted chip */
 
-    --c-amber: 255 184 26; /* #FFB81A trophy gold — bright fill, INK text */
-    --c-amber-dark: 146 99 0; /* #926300 text-safe gold */
-    --c-amber-light: 255 243 214; /* #FFF3D6 pale gold chip */
+    --c-amber: 229 193 88; /* #E5C158 gold (secondary) */
+    --c-amber-dark: 232 199 102; /* #E8C766 bright gold text */
+    --c-amber-light: 42 35 16; /* #2A2310 dark gold chip */
 
-    --c-electric: 41 224 140; /* #29E08C decorative glow only */
-    --c-win: 7 107 64; /* deep green */
-    --c-miss: 154 164 160; /* #9AA4A0 */
+    --c-electric: 212 175 55; /* gold glow */
+    --c-win: 74 200 120; /* #4AC878 clear green — correct/✓ */
+    --c-miss: 224 121 107; /* #E0796B muted red — missed/✗ */
   }
 
   html {
     -webkit-text-size-adjust: 100%;
+    color-scheme: dark;
   }
   body {
     @apply bg-paper text-ink font-sans antialiased;
     position: relative;
   }
-  /* Subtle football backdrop: twin floodlight glows + faint mowing stripes.
-     Fixed, low-opacity, behind everything — never competes with text.
-     Static (no animation), so prefers-reduced-motion needs nothing extra. */
+  /* Clean near-black backdrop with a single subtle gold glow behind the header.
+     No busy patterns. Static, so prefers-reduced-motion needs nothing extra. */
   body::before {
     content: "";
     position: fixed;
@@ -41,34 +41,20 @@
     z-index: -1;
     pointer-events: none;
     background-color: rgb(var(--c-paper));
-    background-image:
-      /* bright stadium floodlight from top-centre */
-      radial-gradient(
-        1150px 560px at 50% -10%,
-        rgba(41, 224, 140, 0.28),
-        transparent 62%
-      ),
-      /* warm gold wash from the top-right */
-      radial-gradient(
-        880px 600px at 100% 4%,
-        rgba(255, 184, 26, 0.18),
-        transparent 58%
-      ),
-      /* mowed-pitch stripes: clearly visible alternating green bands */
-      repeating-linear-gradient(
-        90deg,
-        rgba(7, 107, 64, 0.07) 0 46px,
-        rgba(7, 107, 64, 0.018) 46px 92px
-      );
+    background-image: radial-gradient(
+      900px 440px at 50% -8%,
+      rgba(212, 175, 55, 0.13),
+      transparent 66%
+    );
   }
   /* Tabular figures so score/countdown/leaderboard columns line up. */
   .tnum {
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
   }
-  /* Visible keyboard focus across the app. */
+  /* Visible gold keyboard focus across the app. */
   :focus-visible {
-    outline: 2px solid rgb(var(--c-pitch-dark));
+    outline: 2px solid rgb(var(--c-pitch));
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -89,7 +75,7 @@
     border-radius: 3px;
     background-size: cover;
     background-position: center;
-    box-shadow: inset 0 0 0 1px rgba(6, 33, 25, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
     flex: none;
   }
 }
@@ -106,16 +92,19 @@
 }
 
 @layer components {
+  /* Primary: gold fill, black text — high-contrast, premium. */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-pitch px-5 py-3 font-display text-base font-semibold uppercase tracking-wide text-ink shadow-glow transition hover:brightness-95 active:brightness-90 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-pitch px-5 py-3 font-display text-base font-semibold uppercase tracking-wide text-paper shadow-glow transition hover:brightness-110 active:brightness-95 disabled:cursor-not-allowed disabled:opacity-50;
   }
+  /* Secondary: outlined gold on black. */
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-card px-4 py-2.5 font-medium text-ink transition-colors hover:bg-paper disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-pitch/50 bg-transparent px-4 py-2.5 font-medium text-pitch transition-colors hover:bg-pitch/10 disabled:opacity-50;
   }
   .stage-badge {
     @apply inline-flex items-center rounded-full bg-pitch-light px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-pitch-dark;
   }
+  /* Dark field, cream digits, gold focus ring. */
   .score-input {
-    @apply h-16 w-16 rounded-xl border-2 border-line bg-paper text-center font-mono text-3xl font-bold text-ink tnum transition-colors focus:border-pitch focus:bg-white sm:h-20 sm:w-20;
+    @apply h-16 w-16 rounded-xl border-2 border-line bg-paper text-center font-mono text-3xl font-bold text-ink tnum transition-colors focus:border-pitch focus:bg-card sm:h-20 sm:w-20;
   }
 }

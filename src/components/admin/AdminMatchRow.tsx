@@ -145,7 +145,7 @@ export function AdminMatchRow({
                   value={home}
                   onChange={(e) => setHome(numField(e.target.value))}
                   placeholder="0"
-                  className="h-12 w-14 rounded-lg border-2 border-line bg-white text-center font-mono text-xl font-bold tnum outline-none focus:border-pitch"
+                  className="h-12 w-14 rounded-lg border-2 border-line bg-paper text-center font-mono text-xl font-bold tnum outline-none focus:border-pitch"
                 />
                 <span className="font-bold text-muted">–</span>
                 <input
@@ -155,7 +155,7 @@ export function AdminMatchRow({
                   value={away}
                   onChange={(e) => setAway(numField(e.target.value))}
                   placeholder="0"
-                  className="h-12 w-14 rounded-lg border-2 border-line bg-white text-center font-mono text-xl font-bold tnum outline-none focus:border-pitch"
+                  className="h-12 w-14 rounded-lg border-2 border-line bg-paper text-center font-mono text-xl font-bold tnum outline-none focus:border-pitch"
                 />
               </div>
               <div className="mt-3 flex gap-2">
@@ -222,7 +222,7 @@ export function AdminMatchRow({
                   <button
                     onClick={() => setConfirmDelete(true)}
                     aria-label="Delete match"
-                    className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2.5 text-sm font-medium text-muted hover:bg-red-50 hover:text-red-700"
+                    className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2.5 text-sm font-medium text-muted hover:bg-red-500/15 hover:text-red-400"
                   >
                     <Trash2 className="h-4 w-4" aria-hidden />
                   </button>

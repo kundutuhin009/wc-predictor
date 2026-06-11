@@ -72,7 +72,7 @@ export function MatchForm(props: Props) {
           <select
             name="stage"
             defaultValue={initial?.stage ?? "Group"}
-            className="w-full rounded-lg border border-line bg-paper px-3 py-2.5 text-sm outline-none focus:border-pitch focus:bg-white"
+            className="w-full rounded-lg border border-line bg-paper px-3 py-2.5 text-sm outline-none focus:border-pitch focus:bg-card"
           >
             {STAGES.map((s) => (
               <option key={s} value={s}>
@@ -90,7 +90,7 @@ export function MatchForm(props: Props) {
             name="kickoff_local"
             required
             defaultValue={initial?.kickoff_local ?? ""}
-            className="w-full rounded-lg border border-line bg-paper px-3 py-2.5 text-sm outline-none focus:border-pitch focus:bg-white"
+            className="w-full rounded-lg border border-line bg-paper px-3 py-2.5 text-sm outline-none focus:border-pitch focus:bg-card"
           />
         </label>
       </div>
@@ -106,7 +106,7 @@ export function MatchForm(props: Props) {
             maxLength={40}
             defaultValue={initial?.home_team ?? ""}
             placeholder="e.g. Brazil"
-            className="w-full rounded-lg border border-line bg-paper px-3 py-2.5 text-sm outline-none focus:border-pitch focus:bg-white"
+            className="w-full rounded-lg border border-line bg-paper px-3 py-2.5 text-sm outline-none focus:border-pitch focus:bg-card"
           />
         </label>
         <label className="block">
@@ -120,7 +120,7 @@ export function MatchForm(props: Props) {
             maxLength={40}
             defaultValue={initial?.away_team ?? ""}
             placeholder="e.g. Morocco"
-            className="w-full rounded-lg border border-line bg-paper px-3 py-2.5 text-sm outline-none focus:border-pitch focus:bg-white"
+            className="w-full rounded-lg border border-line bg-paper px-3 py-2.5 text-sm outline-none focus:border-pitch focus:bg-card"
           />
         </label>
       </div>

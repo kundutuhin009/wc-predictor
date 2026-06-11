@@ -128,7 +128,7 @@ function Section({
 function Empty({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3 rounded-xl2 border border-dashed border-line bg-card/50 px-5 py-6 text-sm text-muted">
-      <Trophy className="h-5 w-5 shrink-0 text-line" aria-hidden />
+      <Trophy className="h-5 w-5 shrink-0 text-muted" aria-hidden />
       {children}
     </div>
   );
