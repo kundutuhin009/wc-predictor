@@ -20,6 +20,7 @@ export type Prediction = {
   home_pred: number;
   away_pred: number;
   is_correct: boolean | null;
+  points: number | null; // tiered: 3 exact, 1 correct result, 0 wrong; null until graded
   created_at: string;
 };
 

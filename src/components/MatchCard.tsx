@@ -1,8 +1,9 @@
-import { Check, X, Lock, CalendarClock } from "lucide-react";
+import { Lock, CalendarClock } from "lucide-react";
 import type { MatchWithPrediction } from "@/lib/types";
 import { formatKickoffIST, formatCloseTimeIST, closeTimeMs } from "@/lib/time";
 import { OpenMatch } from "./OpenMatch";
 import { TeamFlag } from "./TeamFlag";
+import { PointsBadge } from "./PointsBadge";
 import { cn } from "@/lib/cn";
 
 export type Bucket = "open" | "locked" | "closed";
@@ -120,7 +121,6 @@ function ClosedBody({
   finished: boolean;
 }) {
   const { home_team, away_team, prediction, home_score, away_score } = match;
-  const correct = prediction?.is_correct === true;
 
   return (
     <div>
@@ -155,16 +155,7 @@ function ClosedBody({
                 {prediction.home_pred}–{prediction.away_pred}
               </span>
             </span>
-            {finished &&
-              (correct ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-pitch-light px-2 py-0.5 text-xs font-bold text-win">
-                  <Check className="h-3.5 w-3.5" aria-hidden /> +1
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 rounded-full bg-paper px-2 py-0.5 text-xs font-medium text-miss">
-                  <X className="h-3.5 w-3.5" aria-hidden /> Missed
-                </span>
-              ))}
+            {finished && <PointsBadge points={prediction.points} />}
           </div>
         ) : (
           <span className="text-xs text-muted">Window closed</span>

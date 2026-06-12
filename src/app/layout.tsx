@@ -25,7 +25,7 @@ const mono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "World Cup 2026 Predictor",
   description:
-    "Predict the exact scoreline of every World Cup 2026 match. One point per exact hit.",
+    "Predict World Cup 2026 scorelines. Exact score = 3 pts, correct result = 1 pt.",
 };
 
 export const viewport: Viewport = {

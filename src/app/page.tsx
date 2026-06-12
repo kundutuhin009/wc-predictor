@@ -23,7 +23,7 @@ export default async function HomePage() {
     supabase
       .from("predictions")
       .select(
-        "id, match_id, user_id, home_pred, away_pred, is_correct, created_at",
+        "id, match_id, user_id, home_pred, away_pred, is_correct, points, created_at",
       ),
   ]);
 
@@ -49,7 +49,7 @@ export default async function HomePage() {
   // Open & locked: soonest first. Closed/finished: most recent first.
   closed.reverse();
 
-  const totalPoints = (preds ?? []).filter((p) => p.is_correct === true).length;
+  const totalPoints = (preds ?? []).reduce((sum, p) => sum + (p.points ?? 0), 0);
 
   return (
     <AppShell displayName={profile.display_name} isAdmin={profile.is_admin}>
@@ -59,8 +59,7 @@ export default async function HomePage() {
           Matches
         </h1>
         <p className="mt-1 text-sm text-muted">
-          Predict the exact scoreline — 1 point per exact hit. You&apos;ve
-          banked{" "}
+          Exact score = 3 pts, correct result = 1 pt. You&apos;ve banked{" "}
           <span className="font-semibold text-pitch-dark">
             {totalPoints} {totalPoints === 1 ? "point" : "points"}
           </span>{" "}

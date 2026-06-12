@@ -2,8 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import { requireProfile } from "@/lib/auth";
 import { AppShell } from "@/components/AppShell";
 import { TeamFlag } from "@/components/TeamFlag";
+import { PointsBadge } from "@/components/PointsBadge";
 import { formatKickoffIST } from "@/lib/time";
-import { Check, X, Lock, CalendarClock, ClipboardList } from "lucide-react";
+import { Lock, CalendarClock, ClipboardList } from "lucide-react";
 import type { MatchStatus } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +25,7 @@ type MyPrediction = {
   id: string;
   home_pred: number;
   away_pred: number;
-  is_correct: boolean | null;
+  points: number | null;
   match: MatchLite | null;
 };
 
@@ -43,7 +44,7 @@ export default async function MyPredictionsPage() {
       ),
     supabase
       .from("predictions")
-      .select("id, match_id, home_pred, away_pred, is_correct")
+      .select("id, match_id, home_pred, away_pred, points")
       .eq("user_id", profile.id),
   ]);
 
@@ -55,7 +56,7 @@ export default async function MyPredictionsPage() {
     id: p.id as string,
     home_pred: p.home_pred as number,
     away_pred: p.away_pred as number,
-    is_correct: (p.is_correct ?? null) as boolean | null,
+    points: (p.points ?? null) as number | null,
     match: matchById.get(p.match_id as string) ?? null,
   }));
 
@@ -102,7 +103,6 @@ export default async function MyPredictionsPage() {
 function PredictionCard({ p }: { p: MyPrediction }) {
   const m = p.match!;
   const finished = m.status === "finished";
-  const correct = p.is_correct === true;
 
   return (
     <article className="rounded-xl2 border border-line bg-card p-5 shadow-card">
@@ -129,15 +129,7 @@ function PredictionCard({ p }: { p: MyPrediction }) {
         </span>
 
         {finished ? (
-          correct ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-pitch-light px-2.5 py-1 text-xs font-bold text-win">
-              <Check className="h-3.5 w-3.5" aria-hidden /> Correct +1
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1 rounded-full bg-paper px-2.5 py-1 text-xs font-medium text-miss">
-              <X className="h-3.5 w-3.5" aria-hidden /> Missed
-            </span>
-          )
+          <PointsBadge points={p.points} />
         ) : (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-pitch-light px-2.5 py-1 text-xs font-semibold text-pitch-dark">
             <Lock className="h-3.5 w-3.5" aria-hidden /> Locked — awaiting result

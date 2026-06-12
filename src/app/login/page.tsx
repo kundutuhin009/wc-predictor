@@ -171,7 +171,7 @@ export default function LoginPage() {
           {/* Form body */}
           <div className="bg-card px-6 pb-6 pt-5">
             <p className="mb-2 text-center text-sm text-muted">
-              Predict the exact scoreline. One point per exact hit.
+              Predict the scoreline. Exact = 3 pts, correct result = 1 pt.
             </p>
             <Attribution className="mb-5" />
           {step === "checking" && (

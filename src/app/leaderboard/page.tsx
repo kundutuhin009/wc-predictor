@@ -31,7 +31,7 @@ export default async function LeaderboardPage() {
             Standings
           </h1>
           <p className="text-sm text-muted">
-            1 point per exact scoreline. Highest wins.
+            Exact score = 3 pts, correct result = 1 pt. Highest wins.
           </p>
         </div>
       </div>
