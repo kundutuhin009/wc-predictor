@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createAnonClient } from "@/lib/supabase/anon";
+import { createClient } from "@/lib/supabase/server";
 import { FocusRefresh } from "@/components/FocusRefresh";
 import { TeamFlag } from "@/components/TeamFlag";
 import type { PublicResult } from "@/lib/types";
@@ -23,14 +24,21 @@ export default async function ResultsPage() {
 
   const results = (data ?? []) as PublicResult[];
 
+  // Logo target depends on auth: members go to the predictor home, visitors to
+  // login. The public board data above stays on the session-less anon client.
+  const {
+    data: { user },
+  } = await createClient().auth.getUser();
+  const logoHref = user ? "/" : "/login";
+
   return (
     <div className="min-h-dvh">
       <FocusRefresh />
       <header className="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
           <Link
-            href="/results"
-            aria-label="WC26 Results — home"
+            href={logoHref}
+            aria-label="WC26 — home"
             className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-80 focus-visible:opacity-80"
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-pitch text-paper">
