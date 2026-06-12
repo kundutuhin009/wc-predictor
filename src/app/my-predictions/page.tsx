@@ -8,22 +8,24 @@ import type { MatchStatus } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-// One of the current user's predictions, with its match embedded.
+type MatchLite = {
+  id: string;
+  stage: string;
+  home_team: string;
+  away_team: string;
+  kickoff_at: string;
+  status: MatchStatus;
+  home_score: number | null;
+  away_score: number | null;
+};
+
+// One of the current user's predictions joined to its match (in JS, no embed).
 type MyPrediction = {
   id: string;
   home_pred: number;
   away_pred: number;
   is_correct: boolean | null;
-  match: {
-    id: string;
-    stage: string;
-    home_team: string;
-    away_team: string;
-    kickoff_at: string;
-    status: MatchStatus;
-    home_score: number | null;
-    away_score: number | null;
-  } | null;
+  match: MatchLite | null;
 };
 
 // Read-only history of the member's own locked-in picks for matches that are no
@@ -32,28 +34,58 @@ export default async function MyPredictionsPage() {
   const profile = await requireProfile();
   const supabase = createClient();
 
-  // RLS restricts predictions to the owner; we filter by user_id too for clarity.
-  const { data } = await supabase
-    .from("predictions")
-    .select(
-      "id, home_pred, away_pred, is_correct, match:matches(id, stage, home_team, away_team, kickoff_at, status, home_score, away_score)",
-    )
-    .eq("user_id", profile.id);
+  // Fetch separately and join in JS — same proven pattern as the Matches page,
+  // instead of an embedded join (which silently returned nothing here).
+  const [matchesRes, predsRes] = await Promise.all([
+    supabase
+      .from("matches")
+      .select(
+        "id, stage, home_team, away_team, kickoff_at, status, home_score, away_score",
+      ),
+    supabase
+      .from("predictions")
+      .select("id, match_id, home_pred, away_pred, is_correct")
+      .eq("user_id", profile.id),
+  ]);
+
+  const matchById = new Map<string, MatchLite>(
+    (matchesRes.data ?? []).map((m) => [m.id, m as MatchLite]),
+  );
+
+  const joined: MyPrediction[] = (predsRes.data ?? []).map((p) => ({
+    id: p.id as string,
+    home_pred: p.home_pred as number,
+    away_pred: p.away_pred as number,
+    is_correct: (p.is_correct ?? null) as boolean | null,
+    match: matchById.get(p.match_id as string) ?? null,
+  }));
 
   const nowMs = Date.now();
-  const rows = ((data ?? []) as unknown as MyPrediction[])
-    .filter(
-      (p) =>
-        p.match &&
-        (p.match.status === "finished" ||
-          closeTimeMs(p.match.kickoff_at) <= nowMs),
-    )
-    // newest match first
+  const pastLocked = (p: MyPrediction) =>
+    !!p.match &&
+    (p.match.status === "finished" || closeTimeMs(p.match.kickoff_at) <= nowMs);
+
+  // DIAGNOSTIC MODE: show ALL the user's predictions (any match), no past/locked
+  // filter — so we can see whether the fetch returns rows at all.
+  const rows = joined
+    .filter((p) => p.match)
     .sort(
       (a, b) =>
         new Date(b.match!.kickoff_at).getTime() -
         new Date(a.match!.kickoff_at).getTime(),
     );
+
+  // TEMPORARY diagnostic — remove after confirming. Surfaces exactly what the
+  // queries returned so we can tell "query got nothing" vs "filter dropped all".
+  const debug = {
+    predsFetched: predsRes.data?.length ?? 0,
+    predsError: predsRes.error?.message ?? null,
+    matchesFetched: matchesRes.data?.length ?? 0,
+    matchesError: matchesRes.error?.message ?? null,
+    joinedWithMatch: joined.filter((p) => p.match).length,
+    wouldShowAfterPastLockedFilter: joined.filter(pastLocked).length,
+    showingNow: rows.length,
+  };
 
   return (
     <AppShell displayName={profile.display_name} isAdmin={profile.is_admin}>
@@ -70,6 +102,11 @@ export default async function MyPredictionsPage() {
           </p>
         </div>
       </div>
+
+      {/* TEMPORARY diagnostic banner — remove after confirming the cause. */}
+      <pre className="mb-4 overflow-x-auto rounded-lg border border-amber/40 bg-amber-light px-3 py-2 text-[11px] text-amber-dark">
+        debug: {JSON.stringify(debug, null, 0)}
+      </pre>
 
       {rows.length === 0 ? (
         <div className="rounded-xl2 border border-dashed border-line bg-card/50 px-5 py-8 text-center text-sm text-muted">
