@@ -17,8 +17,10 @@ export function PredictionForm({
   awayTeam: string;
 }) {
   const router = useRouter();
-  const [home, setHome] = useState("");
-  const [away, setAway] = useState("");
+  // Visual default only — pre-fill 0–0 to save typing. The user must still click
+  // "Lock in prediction" (and confirm) to submit; nothing is saved automatically.
+  const [home, setHome] = useState("0");
+  const [away, setAway] = useState("0");
   const [confirming, setConfirming] = useState(false);
   const [pending, startTransition] = useTransition();
   const homeRef = useRef<HTMLInputElement>(null);
