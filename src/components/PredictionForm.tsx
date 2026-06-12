@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { Lock, Loader2 } from "lucide-react";
 import { submitPrediction } from "@/app/actions/predictions";
 import { TeamFlag } from "./TeamFlag";
@@ -16,12 +15,12 @@ export function PredictionForm({
   homeTeam: string;
   awayTeam: string;
 }) {
-  const router = useRouter();
   // Visual default only — pre-fill 0–0 to save typing. The user must still click
   // "Lock in prediction" (and confirm) to submit; nothing is saved automatically.
   const [home, setHome] = useState("0");
   const [away, setAway] = useState("0");
   const [confirming, setConfirming] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const homeRef = useRef<HTMLInputElement>(null);
 
@@ -40,15 +39,27 @@ export function PredictionForm({
   }
 
   function lockIn() {
+    setError(null);
     startTransition(async () => {
       const res = await submitPrediction(matchId, Number(home), Number(away));
       if (res.ok) {
-        toast("Prediction locked in.", "success");
-        router.refresh();
+        // Reliable update: a full reload re-fetches server data so the home page
+        // re-buckets THIS match into its read-only "Locked in" state (the locked
+        // state is derived from whether a prediction row exists). router.refresh()
+        // was not updating the card reliably. Stash a flash + scroll for after.
+        try {
+          sessionStorage.setItem("pred-scroll", String(window.scrollY));
+          sessionStorage.setItem("pred-flash", "Prediction locked in.");
+        } catch {
+          /* sessionStorage unavailable — reload still works */
+        }
+        window.location.reload();
       } else {
+        // Error (e.g. window closed, or already locked in): show it inline, no
+        // reload. The 15-min lock + insert-only rule stay enforced server-side.
+        setError(res.error);
         toast(res.error, "error");
         setConfirming(false);
-        router.refresh();
       }
     });
   }
@@ -154,6 +165,15 @@ export function PredictionForm({
             </button>
           </div>
         </div>
+      )}
+
+      {error && (
+        <p
+          role="alert"
+          className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-center text-sm text-red-300"
+        >
+          {error}
+        </p>
       )}
     </form>
   );

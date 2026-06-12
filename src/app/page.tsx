@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireProfile } from "@/lib/auth";
 import { AppShell } from "@/components/AppShell";
 import { MatchCard, bucketFor, type Bucket } from "@/components/MatchCard";
+import { PredictionReload } from "@/components/PredictionReload";
 import type { Match, Prediction, MatchWithPrediction } from "@/lib/types";
 import Link from "next/link";
 import { Trophy, ArrowRight } from "lucide-react";
@@ -52,6 +53,7 @@ export default async function HomePage() {
 
   return (
     <AppShell displayName={profile.display_name} isAdmin={profile.is_admin}>
+      <PredictionReload />
       <div className="mb-6">
         <h1 className="font-display text-3xl font-extrabold tracking-tight">
           Matches
