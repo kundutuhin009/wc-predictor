@@ -1,22 +1,32 @@
 "use client";
 
 import { useEffect } from "react";
+import { toast } from "@/lib/toast";
 
-// After the result-save full reload, restore the admin's scroll position so the
-// page doesn't jump to the top. Reads the value stashed before reload (one-shot).
+// Runs on mount after the result-save full reload:
+//  - restores the admin's scroll position (so the page doesn't jump to top)
+//  - shows the success flash toast stashed before the reload (so the admin gets
+//    confirmation the save committed, since the pre-reload toast is lost).
+// Both values are one-shot (cleared after reading).
 export function ScrollRestore() {
   useEffect(() => {
-    let y: string | null = null;
+    let scroll: string | null = null;
+    let flash: string | null = null;
     try {
-      y = sessionStorage.getItem("admin-scroll");
-      if (y !== null) sessionStorage.removeItem("admin-scroll");
+      scroll = sessionStorage.getItem("admin-scroll");
+      flash = sessionStorage.getItem("admin-flash");
+      if (scroll !== null) sessionStorage.removeItem("admin-scroll");
+      if (flash !== null) sessionStorage.removeItem("admin-flash");
     } catch {
       return;
     }
-    if (y !== null) {
-      const top = Number(y) || 0;
-      // Wait for layout so the target offset exists, then jump (no smooth scroll).
+
+    if (scroll !== null) {
+      const top = Number(scroll) || 0;
       requestAnimationFrame(() => window.scrollTo(0, top));
+    }
+    if (flash) {
+      toast(flash, "success");
     }
   }, []);
   return null;

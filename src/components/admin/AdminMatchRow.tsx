@@ -50,9 +50,13 @@ function ResultEntry({
         // server data but leaves client component state intact, which is what let
         // stale score values survive. A hard reload wipes ALL client state so
         // every row's inputs reset to their true DB-backed (empty) values.
-        // Stash scroll position so re-entering a long fixture list isn't jarring.
+        // Stash scroll position + a flash message so they survive the reload.
         try {
           sessionStorage.setItem("admin-scroll", String(window.scrollY));
+          sessionStorage.setItem(
+            "admin-flash",
+            finished ? "Result updated." : "Result saved & graded.",
+          );
         } catch {
           /* sessionStorage unavailable — reload still works */
         }
