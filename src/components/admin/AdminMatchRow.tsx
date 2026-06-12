@@ -10,6 +10,94 @@ import { formatKickoffIST, utcToISTLocalInput } from "@/lib/time";
 import type { Match } from "@/lib/types";
 import { toast } from "@/lib/toast";
 
+// Per-match result entry. Its score state lives ENTIRELY inside this component,
+// so it can never bleed into another match's row. It is mounted fresh (keyed by
+// match.id) when the admin opens the entry panel and unmounts on save/cancel —
+// nothing stale survives. Defaults are empty for an un-entered match, or the
+// existing score when editing a finished one. autoComplete is off and the inputs
+// carry match-scoped names so the browser can't autofill one row from another.
+function ResultEntry({
+  match,
+  onClose,
+}: {
+  match: Match;
+  onClose: () => void;
+}) {
+  const router = useRouter();
+  const finished = match.status === "finished";
+  const [home, setHome] = useState(
+    finished && match.home_score != null ? String(match.home_score) : "",
+  );
+  const [away, setAway] = useState(
+    finished && match.away_score != null ? String(match.away_score) : "",
+  );
+  const [pending, startTransition] = useTransition();
+
+  const numField = (v: string) => v.replace(/\D/g, "").slice(0, 2);
+
+  function save() {
+    if (home === "" || away === "") {
+      toast("Both scores are required.", "error");
+      return;
+    }
+    startTransition(async () => {
+      const res = await enterResult(match.id, Number(home), Number(away));
+      if (res.ok) {
+        toast(finished ? "Result updated." : "Result saved & graded.");
+        onClose(); // unmounts this entry — its score state is discarded
+        router.refresh();
+      } else {
+        toast(res.error, "error");
+      }
+    });
+  }
+
+  return (
+    <div className="mt-4 rounded-lg bg-paper p-3">
+      <div className="flex items-center justify-center gap-3">
+        <input
+          type="number"
+          min={0}
+          name={`home-score-${match.id}`}
+          autoComplete="off"
+          aria-label={`${match.home_team} final score`}
+          value={home}
+          onChange={(e) => setHome(numField(e.target.value))}
+          placeholder="0"
+          className="h-12 w-14 rounded-lg border-2 border-line bg-paper text-center font-mono text-xl font-bold tnum outline-none focus:border-pitch"
+        />
+        <span className="font-bold text-muted">–</span>
+        <input
+          type="number"
+          min={0}
+          name={`away-score-${match.id}`}
+          autoComplete="off"
+          aria-label={`${match.away_team} final score`}
+          value={away}
+          onChange={(e) => setAway(numField(e.target.value))}
+          placeholder="0"
+          className="h-12 w-14 rounded-lg border-2 border-line bg-paper text-center font-mono text-xl font-bold tnum outline-none focus:border-pitch"
+        />
+      </div>
+      <div className="mt-3 flex gap-2">
+        <button onClick={onClose} disabled={pending} className="btn-ghost flex-1">
+          Cancel
+        </button>
+        <button onClick={save} disabled={pending} className="btn-primary flex-1">
+          {pending ? (
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+          ) : (
+            "Save result"
+          )}
+        </button>
+      </div>
+      <p className="mt-2 text-center text-[11px] text-muted">
+        Score at end of regular + extra time, before penalties.
+      </p>
+    </div>
+  );
+}
+
 export function AdminMatchRow({
   match,
   correctCount,
@@ -22,33 +110,10 @@ export function AdminMatchRow({
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [enteringResult, setEnteringResult] = useState(false);
-  const [home, setHome] = useState(
-    match.home_score != null ? String(match.home_score) : "",
-  );
-  const [away, setAway] = useState(
-    match.away_score != null ? String(match.away_score) : "",
-  );
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [pending, startTransition] = useTransition();
 
   const finished = match.status === "finished";
-
-  function saveResult() {
-    if (home === "" || away === "") {
-      toast("Both scores are required.", "error");
-      return;
-    }
-    startTransition(async () => {
-      const res = await enterResult(match.id, Number(home), Number(away));
-      if (res.ok) {
-        toast(finished ? "Result updated." : "Result saved & graded.");
-        setEnteringResult(false);
-        router.refresh();
-      } else {
-        toast(res.error, "error");
-      }
-    });
-  }
 
   function removeMatch() {
     startTransition(async () => {
@@ -61,8 +126,6 @@ export function AdminMatchRow({
       }
     });
   }
-
-  const numField = (v: string) => v.replace(/\D/g, "").slice(0, 2);
 
   return (
     <article className="rounded-xl border border-line bg-card p-4 shadow-sm">
@@ -134,54 +197,13 @@ export function AdminMatchRow({
             </p>
           )}
 
-          {/* Result entry */}
+          {/* Result entry — its own isolated component, fresh per open. */}
           {enteringResult ? (
-            <div className="mt-4 rounded-lg bg-paper p-3">
-              <div className="flex items-center justify-center gap-3">
-                <input
-                  type="number"
-                  min={0}
-                  aria-label={`${match.home_team} final score`}
-                  value={home}
-                  onChange={(e) => setHome(numField(e.target.value))}
-                  placeholder="0"
-                  className="h-12 w-14 rounded-lg border-2 border-line bg-paper text-center font-mono text-xl font-bold tnum outline-none focus:border-pitch"
-                />
-                <span className="font-bold text-muted">–</span>
-                <input
-                  type="number"
-                  min={0}
-                  aria-label={`${match.away_team} final score`}
-                  value={away}
-                  onChange={(e) => setAway(numField(e.target.value))}
-                  placeholder="0"
-                  className="h-12 w-14 rounded-lg border-2 border-line bg-paper text-center font-mono text-xl font-bold tnum outline-none focus:border-pitch"
-                />
-              </div>
-              <div className="mt-3 flex gap-2">
-                <button
-                  onClick={() => setEnteringResult(false)}
-                  disabled={pending}
-                  className="btn-ghost flex-1"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={saveResult}
-                  disabled={pending}
-                  className="btn-primary flex-1"
-                >
-                  {pending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                  ) : (
-                    "Save result"
-                  )}
-                </button>
-              </div>
-              <p className="mt-2 text-center text-[11px] text-muted">
-                Score at end of regular + extra time, before penalties.
-              </p>
-            </div>
+            <ResultEntry
+              key={match.id}
+              match={match}
+              onClose={() => setEnteringResult(false)}
+            />
           ) : (
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <button

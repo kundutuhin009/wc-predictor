@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Attribution, Footer } from "@/components/Footer";
 import { Trophy, Loader2, ArrowRight, MailCheck } from "lucide-react";
 
 type Step = "checking" | "email" | "sent" | "name";
@@ -169,9 +170,10 @@ export default function LoginPage() {
 
           {/* Form body */}
           <div className="bg-card px-6 pb-6 pt-5">
-            <p className="mb-5 text-center text-sm text-muted">
+            <p className="mb-2 text-center text-sm text-muted">
               Predict the exact scoreline. One point per exact hit.
             </p>
+            <Attribution className="mb-5" />
           {step === "checking" && (
             <div className="flex items-center justify-center py-6 text-muted">
               <Loader2 className="h-6 w-6 animate-spin" aria-hidden />
@@ -301,6 +303,8 @@ export default function LoginPage() {
           </Link>{" "}
           — no login needed.
         </p>
+
+        <Footer className="pb-0 pt-8" />
       </div>
     </main>
   );

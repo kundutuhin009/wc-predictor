@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createAnonClient } from "@/lib/supabase/anon";
 import { createClient } from "@/lib/supabase/server";
 import { FocusRefresh } from "@/components/FocusRefresh";
+import { Footer } from "@/components/Footer";
 import { TeamFlag } from "@/components/TeamFlag";
 import type { PublicResult } from "@/lib/types";
 import { formatKickoffIST } from "@/lib/time";
@@ -32,7 +33,7 @@ export default async function ResultsPage() {
   const logoHref = user ? "/" : "/login";
 
   return (
-    <div className="min-h-dvh">
+    <div className="flex min-h-dvh flex-col">
       <FocusRefresh />
       <header className="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
@@ -58,7 +59,7 @@ export default async function ResultsPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-4 py-6 pb-24">
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
         <div className="mb-6">
           <h1 className="font-display text-3xl font-extrabold tracking-tight">
             Results
@@ -82,6 +83,7 @@ export default async function ResultsPage() {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

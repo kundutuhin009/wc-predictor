@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Trophy, ListOrdered, ShieldCheck, LogOut } from "lucide-react";
+import {
+  Trophy,
+  ListOrdered,
+  ClipboardList,
+  ShieldCheck,
+  LogOut,
+} from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import { cn } from "@/lib/cn";
 
@@ -16,6 +22,7 @@ export function Nav({ displayName, isAdmin }: Props) {
 
   const links = [
     { href: "/", label: "Matches", icon: Trophy },
+    { href: "/my-predictions", label: "My Picks", icon: ClipboardList },
     { href: "/leaderboard", label: "Standings", icon: ListOrdered },
     ...(isAdmin
       ? [{ href: "/admin", label: "Admin", icon: ShieldCheck }]
