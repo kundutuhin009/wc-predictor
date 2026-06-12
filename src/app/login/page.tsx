@@ -87,19 +87,55 @@ export default function LoginPage() {
       setStep("email");
       return;
     }
+    // Insert only id/email/display_name — the DB trigger computes normalized_email.
     const { error } = await supabase.from("profiles").insert({
       id: user.id,
       email: user.email,
       display_name: displayName.trim(),
     });
-    setBusy(false);
-    // 23505 = the row already exists (double-submit / two tabs racing the same
-    // first login). The profile is keyed by auth uid, so it's already there —
-    // treat as success and carry on instead of surfacing an error.
-    if (error && error.code !== "23505") {
-      setError(error.message);
-      return;
+
+    if (error) {
+      // 23505 = unique violation. Three constraints can trip it; branch on which.
+      if (error.code === "23505") {
+        const which = `${error.message ?? ""} ${error.details ?? ""}`.toLowerCase();
+
+        // Email (or an alias of it) already has an account. Don't create a row;
+        // sign out and send them back to the start of login.
+        if (
+          which.includes("uniq_normalized_email") ||
+          which.includes("normalized_email")
+        ) {
+          await supabase.auth.signOut();
+          setBusy(false);
+          setError("An account already exists for this email.");
+          setEmail("");
+          setDisplayName("");
+          setStep("email");
+          return;
+        }
+
+        // Display name is taken (case-insensitive). Keep them on the name step
+        // with their session intact so they can try a different name.
+        if (
+          which.includes("uniq_display_name_ci") ||
+          which.includes("display_name")
+        ) {
+          setBusy(false);
+          setError("That name's already taken — pick another.");
+          return;
+        }
+
+        // Otherwise it's the primary key (id): the profile row already exists
+        // for this user (double-submit / two tabs racing the same first login).
+        // Treat as success and carry on.
+      } else {
+        setBusy(false);
+        setError(error.message);
+        return;
+      }
     }
+
+    setBusy(false);
     router.replace("/");
     router.refresh();
   }
