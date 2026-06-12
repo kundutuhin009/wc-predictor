@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Loader2, Check } from "lucide-react";
 import { enterResult, deleteMatch } from "@/app/actions/admin";
@@ -32,6 +32,10 @@ function ResultEntry({
     finished && match.away_score != null ? String(match.away_score) : "",
   );
   const [pending, startTransition] = useTransition();
+  // Per-mount nonce: makes the input names unguessable & unique so the browser
+  // has no saved value to autofill into them (defeats Chrome's value-history
+  // dropdown, which is what was filling the next match's fields).
+  const fieldId = useId();
 
   const numField = (v: string) => v.replace(/\D/g, "").slice(0, 2);
 
@@ -54,43 +58,64 @@ function ResultEntry({
 
   return (
     <div className="mt-4 rounded-lg bg-paper p-3">
-      <div className="flex items-center justify-center gap-3">
-        <input
-          type="number"
-          min={0}
-          name={`home-score-${match.id}`}
-          autoComplete="off"
-          aria-label={`${match.home_team} final score`}
-          value={home}
-          onChange={(e) => setHome(numField(e.target.value))}
-          placeholder="0"
-          className="h-12 w-14 rounded-lg border-2 border-line bg-paper text-center font-mono text-xl font-bold tnum outline-none focus:border-pitch"
-        />
-        <span className="font-bold text-muted">–</span>
-        <input
-          type="number"
-          min={0}
-          name={`away-score-${match.id}`}
-          autoComplete="off"
-          aria-label={`${match.away_team} final score`}
-          value={away}
-          onChange={(e) => setAway(numField(e.target.value))}
-          placeholder="0"
-          className="h-12 w-14 rounded-lg border-2 border-line bg-paper text-center font-mono text-xl font-bold tnum outline-none focus:border-pitch"
-        />
-      </div>
-      <div className="mt-3 flex gap-2">
-        <button onClick={onClose} disabled={pending} className="btn-ghost flex-1">
-          Cancel
-        </button>
-        <button onClick={save} disabled={pending} className="btn-primary flex-1">
-          {pending ? (
-            <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-          ) : (
-            "Save result"
-          )}
-        </button>
-      </div>
+      {/* autoComplete="off" on the form + nonce names + text/inputMode kills the
+          browser autofill dropdown that was carrying scores between rows. */}
+      <form
+        autoComplete="off"
+        onSubmit={(e) => {
+          e.preventDefault();
+          save();
+        }}
+      >
+        <div className="flex items-center justify-center gap-3">
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            name={`score-${fieldId}-home`}
+            autoComplete="off"
+            data-lpignore="true"
+            data-1p-ignore="true"
+            aria-label={`${match.home_team} final score`}
+            value={home}
+            onChange={(e) => setHome(numField(e.target.value))}
+            placeholder="0"
+            className="h-12 w-14 rounded-lg border-2 border-line bg-paper text-center font-mono text-xl font-bold tnum outline-none focus:border-pitch"
+          />
+          <span className="font-bold text-muted">–</span>
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            name={`score-${fieldId}-away`}
+            autoComplete="off"
+            data-lpignore="true"
+            data-1p-ignore="true"
+            aria-label={`${match.away_team} final score`}
+            value={away}
+            onChange={(e) => setAway(numField(e.target.value))}
+            placeholder="0"
+            className="h-12 w-14 rounded-lg border-2 border-line bg-paper text-center font-mono text-xl font-bold tnum outline-none focus:border-pitch"
+          />
+        </div>
+        <div className="mt-3 flex gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={pending}
+            className="btn-ghost flex-1"
+          >
+            Cancel
+          </button>
+          <button type="submit" disabled={pending} className="btn-primary flex-1">
+            {pending ? (
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+            ) : (
+              "Save result"
+            )}
+          </button>
+        </div>
+      </form>
       <p className="mt-2 text-center text-[11px] text-muted">
         Score at end of regular + extra time, before penalties.
       </p>
