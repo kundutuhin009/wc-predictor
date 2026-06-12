@@ -4,6 +4,7 @@ import { requireProfile } from "@/lib/auth";
 import { AppShell } from "@/components/AppShell";
 import { AddMatchPanel } from "@/components/admin/AddMatchPanel";
 import { AdminMatchRow } from "@/components/admin/AdminMatchRow";
+import { ScrollRestore } from "@/components/admin/ScrollRestore";
 import {
   AdminBreakdown,
   winnersByMatch,
@@ -42,6 +43,7 @@ export default async function AdminPage() {
 
   return (
     <AppShell displayName={profile.display_name} isAdmin={profile.is_admin}>
+      <ScrollRestore />
       <div className="mb-6 flex items-center gap-3">
         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-pitch text-paper">
           <ShieldCheck className="h-5 w-5" aria-hidden />

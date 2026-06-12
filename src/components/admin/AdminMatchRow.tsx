@@ -23,7 +23,6 @@ function ResultEntry({
   match: Match;
   onClose: () => void;
 }) {
-  const router = useRouter();
   const finished = match.status === "finished";
   const [home, setHome] = useState(
     finished && match.home_score != null ? String(match.home_score) : "",
@@ -47,9 +46,17 @@ function ResultEntry({
     startTransition(async () => {
       const res = await enterResult(match.id, Number(home), Number(away));
       if (res.ok) {
-        toast(finished ? "Result updated." : "Result saved & graded.");
-        onClose(); // unmounts this entry — its score state is discarded
-        router.refresh();
+        // ONLY on success: force a FULL page reload. router.refresh() re-fetches
+        // server data but leaves client component state intact, which is what let
+        // stale score values survive. A hard reload wipes ALL client state so
+        // every row's inputs reset to their true DB-backed (empty) values.
+        // Stash scroll position so re-entering a long fixture list isn't jarring.
+        try {
+          sessionStorage.setItem("admin-scroll", String(window.scrollY));
+        } catch {
+          /* sessionStorage unavailable — reload still works */
+        }
+        window.location.reload();
       } else {
         toast(res.error, "error");
       }
