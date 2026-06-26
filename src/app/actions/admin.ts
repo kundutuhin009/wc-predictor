@@ -119,9 +119,12 @@ export async function enterResult(
     .eq("id", matchId);
   if (dbErr) return { ok: false, error: dbErr.message };
 
+  // Grading changes scores, standings AND the public results board — invalidate
+  // every cached surface so a freshly-entered result shows up immediately.
   revalidatePath("/admin");
   revalidatePath("/");
   revalidatePath("/leaderboard");
+  revalidatePath("/results");
   return { ok: true };
 }
 
@@ -138,5 +141,6 @@ export async function deleteMatch(matchId: string): Promise<ActionResult> {
   revalidatePath("/admin");
   revalidatePath("/");
   revalidatePath("/leaderboard");
+  revalidatePath("/results");
   return { ok: true };
 }
